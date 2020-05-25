@@ -7,6 +7,11 @@ pipeline {
     }
     stages {
         stage('Build') {
+          agent {
+             node {
+               label "jenkins-slave-npm"
+                }
+            }
             steps {
                 sh 'npm install'
             }
