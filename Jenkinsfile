@@ -1,12 +1,14 @@
 pipeline {
-    agent any
+    agent {
+            label "master"
+        }
     environment {
         CI = 'true'
     }
     stages {
         stage('Build') {
             steps {
-                sh 'npm install'
+                sh "/usr/bin/npm install"
             }
         }
         stage('Test') {
