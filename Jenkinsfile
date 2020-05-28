@@ -10,7 +10,7 @@ spec:
     - name: HOME
       value: /home/jenkins
   - name: nodejs
-    image: openshift/jenkins-agent-nodejs-8-centos7
+    image: node:6-alpine
     command: ['cat']
     tty: true
     volumeMounts:
