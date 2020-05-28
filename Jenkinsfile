@@ -1,10 +1,34 @@
 pipeline {
     agent {
-        docker {
-            image 'node:6-alpine'
-            args '-p 3000:3000'
+        kubernetes {
+          label 'jenkins-slave'
+          defaultContainer 'jnlp'
+          yaml """
+    apiVersion: v1
+    kind: Pod
+    spec:
+      containers:
+      - name: dind
+        image: docker:18.09-dind
+        securityContext:
+          privileged: true
+      - name: docker
+        env:
+        - name: DOCKER_HOST
+          value: 127.0.0.1
+        image: docker:18.09
+        command:
+        - cat
+        tty: true
+      - name: nodejs
+        image: openshift/jenkins-agent-nodejs-8-centos7
+        command:
+        - cat
+        tty: true
+    """
         }
-    }
+      }
+
     environment {
         CI = 'true'
     }
