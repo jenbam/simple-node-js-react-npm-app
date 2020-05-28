@@ -1,30 +1,36 @@
-pipeline {
-    agent {
-        docker {
-            image 'node:6-alpine'
-            args '-p 3000:3000'
-        }
+podTemplate(yaml:'''
+spec:
+  containers:
+  - name: jnlp
+    image: jenkins/jnlp-slave:4.0.1-1
+    volumeMounts:
+    - name: home-volume
+      mountPath: /home/jenkins
+    env:
+    - name: HOME
+      value: /home/jenkins
+  - name: maven
+    image: maven:3.6.3-jdk-8
+    command: ['cat']
+    tty: true
+    volumeMounts:
+    - name: home-volume
+      mountPath: /home/jenkins
+    env:
+    - name: HOME
+      value: /home/jenkins
+    - name: MAVEN_OPTS
+      value: -Duser.home=/home/jenkins
+  volumes:
+  - name: home-volume
+    emptyDir: {}
+''') {
+  node(POD_LABEL) {
+    stage('Build a Maven project') {
+      container('maven') {
+        git 'https://github.com/jenkinsci/kubernetes-plugin.git'
+        sh 'mvn -B clean package -DskipTests'
+      }
     }
-    environment {
-        CI = 'true'
-    }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'npm install'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './jenkins/scripts/test.sh'
-            }
-        }
-        stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
-                input message: 'Finished using the web site? (Click "Proceed" to continue)'
-                sh './jenkins/scripts/kill.sh'
-            }
-        }
-    }
+  }
 }
