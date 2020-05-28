@@ -2,15 +2,15 @@ podTemplate(yaml:'''
 spec:
   containers:
   - name: jnlp
-    image: jenkins/jnlp-slave:4.0.1-1
+    image: jenkins/jnlp-slave
     volumeMounts:
     - name: home-volume
       mountPath: /home/jenkins
     env:
     - name: HOME
       value: /home/jenkins
-  - name: node
-    image: node:6-alpine
+  - name: dind
+    image: docker:19.03
     command: ['cat']
     tty: true
     volumeMounts:
@@ -25,13 +25,11 @@ spec:
   - name: home-volume
     emptyDir: {}
 ''') {
-  node('test-pod') {
-    stage('Checkout') {
-      checkout scm
-    }
-    stage('Build') {
-      container('go-agent') {
-        // This is where we build our code.
+  node(POD_LABEL) {
+    stage('Build a Maven project') {
+      container('maven') {
+        git 'https://github.com/jenkinsci/kubernetes-plugin.git'
+        sh 'mvn -B clean package -DskipTests'
       }
     }
   }
