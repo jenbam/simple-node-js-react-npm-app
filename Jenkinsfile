@@ -9,8 +9,8 @@ spec:
     env:
     - name: HOME
       value: /home/jenkins
-  - name: docker
-    image: docker:19.03
+  - name: nodejs
+    image: openshift/jenkins-agent-nodejs-8-centos7
     command: ['cat']
     tty: true
     volumeMounts:
@@ -24,8 +24,8 @@ spec:
     emptyDir: {}
 ''') {
   node(POD_LABEL) {
-    stage('Build a Maven project') {
-      container('docker') {
+    stage('Build a Nodejs project') {
+      container('nodejs') {
         sh 'npm install'
       }
     }
