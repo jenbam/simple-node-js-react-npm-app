@@ -8,7 +8,7 @@ podTemplate(
         volumes: [
                 emptyDirVolume(mountPath: '/home/jenkins', memory: true),
                 hostPathVolume(mountPath: '/home/jenkins', hostPath: '/home/jenkins')
-        ],
+        ])
         {
           //node = the pod label
           node('test-pod') {
@@ -24,7 +24,7 @@ podTemplate(
               }
             }
           }
-        })
+        }
 
 
 /*podTemplate(yaml:'''
