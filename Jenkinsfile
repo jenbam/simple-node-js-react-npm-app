@@ -1,6 +1,10 @@
 podTemplate(containers: [
-        containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'nodejs', image: 'quay.io/openshift/origin-jenkins-agent-nodejs', ttyEnabled: true, command: 'cat')
+        containerTemplate(
+                name: 'nodejs',
+                image: 'quay.io/openshift/origin-jenkins-agent-nodejs',
+                ttyEnabled: true,
+                command: 'cat',
+                workingDir: '/home/jenkins/agent')
 ]) {
 
     node(POD_LABEL) {
