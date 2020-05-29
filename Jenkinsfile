@@ -2,20 +2,20 @@ podTemplate(
         name: 'test-pod',
         label: 'test-pod',
         containers: [
-                containerTemplate(name: 'golang', image: 'golang:1.9.4-alpine3.7'),
-                containerTemplate(name: 'docker', image: 'trion/jenkins-docker-client'),
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave'),
+                containerTemplate(name: 'nodejs', image: 'node:6-alpine'),
         ],
         volumes: [
-                hostPathVolume(mountPath: '/var/run/docker.sock',
-                        hostPath: '/var/run/docker.sock')
+                emptyDirVolume(mountPath: '/home/jenkins', memory: true),
+                hostPathVolume(mountPath: '/home/jenkins', hostPath: '/home/jenkins')
         ],
         {
           //node = the pod label
           node('test-pod') {
             //container = the container label
-            stage('Build') {
-              container('golang') {
-                // This is where we build our code.
+            stage('Build a Nodejs project') {
+              container('nodejs') {
+                  sh 'npm install'
               }
             }
             stage('Build Docker Image') {
@@ -25,3 +25,38 @@ podTemplate(
             }
           }
         })
+
+
+/*podTemplate(yaml:'''
+spec:
+  containers:
+  - name: jnlp
+    image: jenkins/jnlp-slave
+    volumeMounts:
+    - name: home-volume
+      mountPath: /home/jenkins
+    env:
+    - name: HOME
+      value: /home/jenkins
+  - name: nodejs
+    image: node:6-alpine
+    command: ['cat']
+    tty: true
+    volumeMounts:
+    - name: home-volume
+      mountPath: /home/jenkins
+    env:
+    - name: HOME
+      value: /home/jenkins
+  volumes:
+  - name: home-volume
+    emptyDir: {}
+''') {
+    node(POD_LABEL) {
+        stage('Build a Nodejs project') {
+            container('nodejs') {
+                sh 'npm install'
+            }
+        }
+    }
+}*/
