@@ -1,8 +1,45 @@
+podTemplate(containers: [
+        containerTemplate(name: 'nodejs', image: 'node:6-alpine', ttyEnabled: true, command: 'cat', args: '-p 3000:3000'),
+        //containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
+]) {
+
+    node(POD_LABEL) {
+        stage('Get a Node project') {
+            git 'https://github.com/jenbam/simple-node-js-react-npm-app.git'
+            container('nodejs') {
+                stage('Build a Nodejs project') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+/*        stage('Get a Golang project') {
+            git url: 'https://github.com/hashicorp/terraform.git'
+            container('golang') {
+                stage('Build a Go project') {
+                    sh """
+                    mkdir -p /go/src/github.com/hashicorp
+                    ln -s `pwd` /go/src/github.com/hashicorp/terraform
+                    cd /go/src/github.com/hashicorp/terraform && make core-dev
+                    """
+                }
+            }
+        }*/
+
+    }
+}
+
+
+
+
+
+
+
 podTemplate(
         name: 'test-pod',
         label: 'test-pod',
         containers: [
-                containerTemplate(name: 'nodejs', image: 'node:6-alpine', ttyEnabled: true, command: 'cat', args: '-p 3000:3000'),
+                //containerTemplate(name: 'nodejs', image: 'node:6-alpine', ttyEnabled: true, command: 'cat', args: '-p 3000:3000'),
                 //containerTemplate(name: 'golang', image: 'golang:1.8.0', ttyEnabled: true, command: 'cat')
         ])
         {
