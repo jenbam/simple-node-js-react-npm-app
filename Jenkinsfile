@@ -10,6 +10,7 @@ podTemplate(
             container('nodejs') {
                 stage('Build a Nodejs project') {
                     echo 'npm install'
+                    sh 'node --version'
                     /*sh '''
                     curl -sL https://deb.nodesource.com/setup | sudo bash -
                     sudo apt-get install -y nodejs
