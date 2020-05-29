@@ -2,12 +2,11 @@ podTemplate(
         name: 'test-pod',
         label: 'test-pod',
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave'),
-                containerTemplate(name: 'nodejs', image: 'node:6-alpine'),
-        ],
-        volumes: [
-                emptyDirVolume(mountPath: '/home/jenkins', memory: true),
-                hostPathVolume(mountPath: '/home/jenkins', hostPath: '/home/jenkins')
+                containerTemplate(
+                        name: 'nodejs',
+                        image: 'node:6-alpine',
+                        ttyEnabled: true, command: 'cat',
+                        args:'-p 3000:3000')
         ])
         {
           //node = the pod label
@@ -15,16 +14,36 @@ podTemplate(
             //container = the container label
             stage('Build a Nodejs project') {
               container('nodejs') {
-                  sh 'npm install'
+                  sh 'echo hello world'
+                  //sh 'npm install'
               }
             }
-            stage('Build Docker Image') {
+/*            stage('Build Docker Image') {
               container('docker') {
                 // This is where we build the Docker image
               }
-            }
+            }*/
           }
         }
+
+
+/*podTemplate(
+        label: "skopeo-pod",
+        cloud: "openshift",
+        inheritFrom: "maven",
+        containers: [
+                containerTemplate(
+                        name: "jnlp",
+                        image: "docker-registry.default.svc:5000/${GUID}-jenkins/jenkins-agent-maven-skopeo:latest",
+                        resourceRequestMemory: "1Gi",
+                        resourceLimitMemory: "2Gi"
+                )
+        ]
+) {
+    node('skopeo-pod') {
+
+    }
+}*/
 
 
 /*podTemplate(yaml:'''
