@@ -13,9 +13,11 @@ podTemplate(
             git 'https://github.com/jenbam/simple-node-js-react-npm-app.git'
             container('nodejs') {
                 stage('Build a Nodejs project') {
-                    sh 'curl -sL https://deb.nodesource.com/setup | sudo bash -'
-                    sh 'sudo apt-get install -y nodejs'
-                    sh 'npm install'
+
+                    sh(script: 'curl -sL https://deb.nodesource.com/setup | sudo bash -', returnStdout: true)
+                    sh(script: 'sudo apt-get install -y nodejs', returnStdout: true)
+                    sh(script: 'npm install', returnStdout: true)
+
                 }
                 stage('Build Docker Image'){
                     container('docker'){
