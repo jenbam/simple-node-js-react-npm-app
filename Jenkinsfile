@@ -6,8 +6,8 @@ podTemplate(containers: [
     node(POD_LABEL) {
         stage('Get a Nodejs project') {
             git url: 'https://github.com/jenbam/simple-node-js-react-npm-app.git'
-            container('golang') {
-                stage('Build a Go project') {
+            container('nodejs') {
+                stage('Build a Nodejs project') {
                     sh """
                     curl -sL https://deb.nodesource.com/setup | sudo bash -
                     sudo apt-get install -y nodejs
